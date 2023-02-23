@@ -6,38 +6,68 @@ import NewDisney from "./NewDisney"
 import Originals from './Originals'
 import Trending from './Trending'
 import { useEffect } from 'react'
-import { useDispatch , useSelector } from 'react-redux'
-import {db} from '../firebase'
-import { collection, getDocs} from "firebase/firestore"; 
+import { useDispatch, useSelector } from 'react-redux'
+import { db } from '../firebase'
+import { collection, getDocs } from "firebase/firestore";
 import { setMovies } from '../features/movie/movieSlice'
 import { selectedUserName } from '../features/user/userSlice'
 
-const Home = ({props}) => {
+const Home = ({ props }) => {
   const movieRef = collection(db, "movies");
   const dispatch = useDispatch()
   const userName = useSelector(selectedUserName)
-  let recommends = [];
+  let recommend = [];
   let newDisney = [];
   let originals = [];
   let trending = [];
 
+
   useEffect(() => {
-    getDocs(movieRef).then((querySnapshot)=>{
+    getDocs(movieRef).then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
+        switch (doc.data().type) {
+          case 'recommend':
+  
+            recommend = [...recommend , { id: doc.id, ...doc.data()}]
+            break;
+
+          case 'new':
+            newDisney = [...newDisney , { id: doc.id, ...doc.data()}]
+            break
+
+          case 'original':
+            originals = [...originals , { id: doc.id, ...doc.data()}]
+            break
+
+          case "trending":
+            trending = [...trending , { id: doc.id, ...doc.data()}]
+
+          default:
+            break;
+        }
+
         
+    dispatch(
+      setMovies({
+        recommend: recommend,
+        newDisney: newDisney,
+        originals: originals,
+        trending: trending
+      })
+    )
       });
     })
-  }, [])
-  
+  }, [userName])
+
 
   return (
     <Container>
-        <ImgSlider/>
-        <Viewers/>
-        <Recommends/>
-        <NewDisney/>
-        <Originals/>
-        <Trending/>
+      <ImgSlider />
+      <Viewers />
+      <Recommends />
+      <NewDisney />
+      <Originals />
+      <Trending />
     </Container>
   )
 }

@@ -1,31 +1,26 @@
 import { Link } from "react-router-dom"
 import styled from "styled-components"
+import { useSelector } from 'react-redux'
+import { selectOriginal } from '../features/movie/movieSlice'
 
 const Originals = (props) => {
+
+   const original = useSelector(selectOriginal)
+
   return (
     <Container>
        <h4>Originals</h4>
        <Content>
-          <Wrap>
-             <Link to='/'>
-                <img src="https://whatsondisneyplus.com/wp-content/uploads/2020/01/Disney-Plus-Logo_supplied_1536x864-1024x576.jpg" alt=""/>
-             </Link>
-          </Wrap>
-          <Wrap>
-             <Link to='/'>
-                <img src="https://whatsondisneyplus.com/wp-content/uploads/2020/01/Disney-Plus-Logo_supplied_1536x864-1024x576.jpg" alt=""/>
-             </Link>
-          </Wrap>
-          <Wrap>
-             <Link to='/'>
-                <img src="https://whatsondisneyplus.com/wp-content/uploads/2020/01/Disney-Plus-Logo_supplied_1536x864-1024x576.jpg" alt=""/>
-             </Link>
-          </Wrap>
-          <Wrap>
-             <Link to='/'>
-                <img src="https://whatsondisneyplus.com/wp-content/uploads/2020/01/Disney-Plus-Logo_supplied_1536x864-1024x576.jpg" alt=""/>
-             </Link>
-          </Wrap>
+       {
+               original && original.map((movie, key) => (
+                  <Wrap key={key}>
+                     {movie.id}
+                     <Link to={`/detail/${movie.id}`}>
+                        <img src={movie.cardImg} alt={movie.title} />
+                     </Link>
+                  </Wrap>
+               ))
+            }
        </Content>
     </Container>
   )
